@@ -1,7 +1,9 @@
 use clap::{Parser, Subcommand};
 
-mod client;
-use crate::client::CryptoClient;
+mod ping;
+pub mod simple;
+use crate::ping::PingCtx;
+use crate::simple::SimpleCtx;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -13,22 +15,7 @@ struct Crypto {
 #[derive(Subcommand)]
 enum Commands {
     Ping(PingCtx),
-}
-
-#[derive(Parser, Debug)]
-struct PingCtx {}
-
-impl PingCtx {
-    async fn run_command(&self) {
-        println!("Pinging...");
-        let crypto_client = client::CryptoClientHTTP;
-
-        let http_res = match crypto_client.ping().await {
-            Ok(res) => res,
-            Err(error) => panic!("Problem with ping {:?}", error),
-        };
-        println!("{:?}", http_res.get_status());
-    }
+    Simple(SimpleCtx)
 }
 
 #[tokio::main]
@@ -37,5 +24,6 @@ async fn main() {
 
     match &cli.commands {
         Commands::Ping(ctx) => PingCtx::run_command(ctx).await,
+        Commands::Simple(ctx) => SimpleCtx::run_command(ctx).await,
     };
 }

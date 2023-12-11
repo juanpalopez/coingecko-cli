@@ -28,7 +28,7 @@ pub trait CryptoClient {
 pub struct CryptoClientHTTP;
 
 impl CryptoClientHTTP {
-    const BASE_API_URL: &str = "https://api.coingecko.com/api/v3";
+    const BASE_API_URL: &'static str = "https://api.coingecko.com/api/v3";
 }
 
 #[async_trait]
