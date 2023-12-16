@@ -1,9 +1,4 @@
 use clap::{Parser, Subcommand};
-use serde_json::Value;
-
-#[path = "./client.rs"]
-mod client;
-use client::CryptoClient;
 
 #[derive(Debug, Parser)]
 pub struct SimpleCtx {
@@ -26,32 +21,33 @@ enum Commands {
 pub struct SupportedVsCurrenciesCtx {}
 
 impl SupportedVsCurrenciesCtx {
-    fn parse_response(&self, body: &String) -> Vec<String> {
-		let data = serde_json::from_str(body.as_str()).unwrap();
-        let mut result = Vec::new();
+    // fn parse_response(&self, body: &String) -> Vec<String> {
+    // 	let data = serde_json::from_str(body.as_str()).unwrap();
+    //     let mut result = Vec::new();
 
-		if let Value::Array(arr) = data {
-			for currency in arr {
-				if let Some(c) = currency.as_str() {
-					result.push(c.to_string()); 
-				}
-			}
-		}
+    // 	if let Value::Array(arr) = data {
+    // 		for currency in arr {
+    // 			if let Some(c) = currency.as_str() {
+    // 				result.push(c.to_string());
+    // 			}
+    // 		}
+    // 	}
 
-        result
-    }
+    //     result
+    // }
     pub async fn run_command(&self) {
-        let crypto_client = client::CryptoClientHTTP;
+        println!("Supported Vs currencies...");
+        // let crypto_client = client::CryptoClientHTTP;
 
-        let client_res = match crypto_client.simple_supported_vs_currencies().await {
-            Ok(res) => res,
-            Err(error) => panic!("Problem with ping {}", error),
-        };
-        let currencies = self.parse_response(client_res.get_body());
+        // let client_res = match crypto_client.simple_supported_vs_currencies().await {
+        //     Ok(res) => res,
+        //     Err(error) => panic!("Problem with ping {}", error),
+        // };
+        // let currencies = self.parse_response(client_res.get_body());
 
-        for currency in currencies {
-            println!("{}", currency);
-        }
+        // for currency in currencies {
+        //     println!("{}", currency);
+        // }
     }
 }
 

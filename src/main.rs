@@ -1,9 +1,11 @@
 use clap::{Parser, Subcommand};
 
-mod ping;
-pub mod simple;
-use crate::ping::PingCtx;
-use crate::simple::SimpleCtx;
+mod api;
+mod cli;
+
+// mod simple;
+use crate::cli::ping::PingCtx;
+use crate::cli::simple::SimpleCtx;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -15,7 +17,7 @@ struct Crypto {
 #[derive(Subcommand)]
 enum Commands {
     Ping(PingCtx),
-    Simple(SimpleCtx)
+    Simple(SimpleCtx),
 }
 
 #[tokio::main]
