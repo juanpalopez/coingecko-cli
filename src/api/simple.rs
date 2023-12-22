@@ -1,10 +1,12 @@
+use serde::Deserialize;
+
 use crate::api::client::CoinGecko;
 use crate::api::error::Error;
 use crate::api::response::Response;
 use crate::api::transport::Transport;
 use crate::api::Method;
 
-enum SimpleSupportedVsCurrenciesParts {
+pub enum SimpleSupportedVsCurrenciesParts {
     None,
 }
 
@@ -16,7 +18,7 @@ impl SimpleSupportedVsCurrenciesParts {
     }
 }
 
-struct SimpleSupportedVsCurrencies<'a> {
+pub struct SimpleSupportedVsCurrencies<'a> {
     transport: &'a Transport,
     parts: SimpleSupportedVsCurrenciesParts,
 }
@@ -26,7 +28,7 @@ impl<'a> SimpleSupportedVsCurrencies<'a>{
         SimpleSupportedVsCurrencies { transport, parts }
     }
 
-    async fn send(&self) -> Result<Response, Error> {
+    pub async fn send(&self) -> Result<Response, Error> {
         let path = self.parts.url();
         let method = Method::Get;
         let response = self.transport.send(method, &path).await?;
@@ -34,7 +36,11 @@ impl<'a> SimpleSupportedVsCurrencies<'a>{
     }
 }
 
-struct Simple<'a> {
+
+#[derive(Deserialize, Debug)]
+pub struct SimpleSupportedVsCurrenciesResponse(Vec<String>);
+
+pub struct Simple<'a> {
     transport: &'a Transport,
 }
 
@@ -47,7 +53,7 @@ impl<'a> Simple<'a> {
         self.transport
     }
 
-    fn vs_supported_currencies(
+    pub fn supported_vs_currencies(
         &self,
         parts: SimpleSupportedVsCurrenciesParts,
     ) -> SimpleSupportedVsCurrencies {
@@ -56,7 +62,7 @@ impl<'a> Simple<'a> {
 }
 
 impl CoinGecko {
-    fn simple(&self) -> Simple {
+    pub fn simple(&self) -> Simple {
         Simple::new(self.transport())
     }
 }

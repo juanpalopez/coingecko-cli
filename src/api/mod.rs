@@ -1,11 +1,12 @@
 pub mod client;
-mod error;
-mod ping;
-mod response;
-mod simple;
-mod transport;
+pub mod error;
+pub mod ping;
+pub mod response;
+pub mod simple;
+pub mod transport;
 
-enum Method {
+#[derive(Debug)]
+pub enum Method {
     Get,
     Post,
 }

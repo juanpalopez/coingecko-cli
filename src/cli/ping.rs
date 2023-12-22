@@ -1,17 +1,29 @@
+use std::collections::HashMap;
+
 use clap::Parser;
+use crate::api::client::CoinGecko;
+use crate::api::error::Error;
+use crate::api::ping::{PingParts, PingPingResponse};
 
 #[derive(Parser, Debug)]
 pub struct PingCtx {}
 
 impl PingCtx {
-    pub async fn run_command(&self) {
+    pub async fn run_command(&self, client: &CoinGecko) -> Result<(), Error>{
         println!("Pinging...");
-        // let crypto_client = client_bk::CryptoClientHTTP;
+        let response = client.
+        ping().
+        ping(PingParts::None).
+        send().await?;
 
-        // let http_res = match crypto_client.ping().await {
-        //     Ok(res) => res,
-        //     Err(error) => panic!("Problem with ping {}", error),
-        // };
-        // println!("{:?}", http_res.get_status());
+        let body:PingPingResponse = response.json().await?;
+        println!("{:?}", body);
+
+        // match body {
+        //     Ok(resp) => println!("{:?}",resp),
+        //     Err(err) => print!("{:?}", err)
+        // }
+        Ok(())
+        
     }
 }

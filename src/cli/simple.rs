@@ -1,4 +1,7 @@
 use clap::{Parser, Subcommand};
+use crate::api::client::CoinGecko;
+use crate::api::error::Error;
+use crate::api::simple::{SimpleSupportedVsCurrenciesParts, SimpleSupportedVsCurrenciesResponse};
 
 #[derive(Debug, Parser)]
 pub struct SimpleCtx {
@@ -21,33 +24,24 @@ enum Commands {
 pub struct SupportedVsCurrenciesCtx {}
 
 impl SupportedVsCurrenciesCtx {
-    // fn parse_response(&self, body: &String) -> Vec<String> {
-    // 	let data = serde_json::from_str(body.as_str()).unwrap();
-    //     let mut result = Vec::new();
-
-    // 	if let Value::Array(arr) = data {
-    // 		for currency in arr {
-    // 			if let Some(c) = currency.as_str() {
-    // 				result.push(c.to_string());
-    // 			}
-    // 		}
-    // 	}
-
-    //     result
-    // }
-    pub async fn run_command(&self) {
+    pub async fn run_command(&self, client: &CoinGecko) -> Result<(), Error>{
         println!("Supported Vs currencies...");
-        // let crypto_client = client::CryptoClientHTTP;
+        let response = client.
+            simple().
+            supported_vs_currencies(SimpleSupportedVsCurrenciesParts::None).
+            send().await?;
 
-        // let client_res = match crypto_client.simple_supported_vs_currencies().await {
-        //     Ok(res) => res,
-        //     Err(error) => panic!("Problem with ping {}", error),
-        // };
-        // let currencies = self.parse_response(client_res.get_body());
+        let body:SimpleSupportedVsCurrenciesResponse = response.json().await?;
+        // let body = response.text().await?;
+        println!("{:?}", body);
 
-        // for currency in currencies {
-        //     println!("{}", currency);
+        // match body {
+        //     Ok(resp) => println!("{:?}", resp),
+        //     Err(err) => println!("{:?}", err)
         // }
+
+        Ok(())
+
     }
 }
 
@@ -70,10 +64,10 @@ impl TokenPriceCtx {
 }
 
 impl SimpleCtx {
-    pub async fn run_command(&self) {
+    pub async fn run_command(&self, client: &CoinGecko) {
         match &self.commands {
             Commands::SupportedVsCurrencies(ctx) => {
-                SupportedVsCurrenciesCtx::run_command(ctx).await;
+                SupportedVsCurrenciesCtx::run_command(ctx, client).await;
             }
             Commands::Price(ctx) => {
                 PriceCtx::run_command(ctx).await;
