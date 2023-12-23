@@ -4,7 +4,7 @@ use crate::api::Method;
 use url::Url;
 
 pub enum BuildError {
-    Http(reqwest::Error)
+    Http(reqwest::Error),
 }
 
 impl From<reqwest::Error> for BuildError {
@@ -21,15 +21,15 @@ pub struct TransportBuilder {
 
 impl TransportBuilder {
     pub fn new(base_path: Url) -> Self {
-        Self{
+        Self {
             client_builder: reqwest::Client::builder(),
             url: base_path,
         }
     }
 
-    pub fn build(self) -> Result<Transport,reqwest::Error> {
+    pub fn build(self) -> Result<Transport, reqwest::Error> {
         let new_client = self.client_builder.build()?;
-        Ok(Transport{
+        Ok(Transport {
             client: new_client,
             base_url: self.url,
         })
@@ -38,30 +38,17 @@ impl TransportBuilder {
 
 pub struct Transport {
     client: reqwest::Client,
-    base_url: Url
+    base_url: Url,
 }
 
 impl Transport {
-
-    // pub fn create(base_url: &str) -> Result<Transport, Error> {
-    //     let url = Url::parse(base_url)?;
-    //     let new_client = reqwest::ClientBuilder::new();
-    //     let transport = Transport { client_builder: new_client,  base_url: url };
-    //     Ok(transport)
-    // }
     pub async fn send(&self, method: Method, path: &str) -> Result<Response, Error> {
-
         let url = self.base_url.join(path.trim_start_matches("/"))?;
         let response = self.client.get(url).send().await;
-
-        // let status = response.status();
-        // let body = response.text().await?;
 
         match response {
             Ok(resp) => Ok(Response::new(resp, method)),
             Err(err) => Err(err.into()),
         }
-        // Ok(Response::new(body,method))
-
     }
 }

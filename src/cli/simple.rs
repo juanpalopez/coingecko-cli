@@ -1,7 +1,8 @@
-use clap::{Parser, Subcommand};
 use crate::api::client::CoinGecko;
 use crate::api::error::Error;
-use crate::api::simple::{SimpleSupportedVsCurrenciesParts, SimpleSupportedVsCurrenciesResponse};
+use crate::api::simple::SimpleSupportedVsCurrenciesParts;
+use clap::{Parser, Subcommand};
+use serde_json::Value;
 
 #[derive(Debug, Parser)]
 pub struct SimpleCtx {
@@ -24,24 +25,18 @@ enum Commands {
 pub struct SupportedVsCurrenciesCtx {}
 
 impl SupportedVsCurrenciesCtx {
-    pub async fn run_command(&self, client: &CoinGecko) -> Result<(), Error>{
+    pub async fn run_command(&self, client: &CoinGecko) -> Result<(), Error> {
         println!("Supported Vs currencies...");
-        let response = client.
-            simple().
-            supported_vs_currencies(SimpleSupportedVsCurrenciesParts::None).
-            send().await?;
+        let response = client
+            .simple()
+            .supported_vs_currencies(SimpleSupportedVsCurrenciesParts::None)
+            .send()
+            .await?;
 
-        let body:SimpleSupportedVsCurrenciesResponse = response.json().await?;
-        // let body = response.text().await?;
-        println!("{:?}", body);
-
-        // match body {
-        //     Ok(resp) => println!("{:?}", resp),
-        //     Err(err) => println!("{:?}", err)
-        // }
+        let body: Value = response.json().await?;
+        println!("{:#}", body);
 
         Ok(())
-
     }
 }
 

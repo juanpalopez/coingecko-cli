@@ -23,7 +23,7 @@ pub struct SimpleSupportedVsCurrencies<'a> {
     parts: SimpleSupportedVsCurrenciesParts,
 }
 
-impl<'a> SimpleSupportedVsCurrencies<'a>{
+impl<'a> SimpleSupportedVsCurrencies<'a> {
     pub fn new(transport: &'a Transport, parts: SimpleSupportedVsCurrenciesParts) -> Self {
         SimpleSupportedVsCurrencies { transport, parts }
     }
@@ -36,9 +36,14 @@ impl<'a> SimpleSupportedVsCurrencies<'a>{
     }
 }
 
-
 #[derive(Deserialize, Debug)]
 pub struct SimpleSupportedVsCurrenciesResponse(Vec<String>);
+
+impl SimpleSupportedVsCurrenciesResponse {
+    pub fn coins(&self) -> &[String] {
+        &self.0
+    }
+}
 
 pub struct Simple<'a> {
     transport: &'a Transport,

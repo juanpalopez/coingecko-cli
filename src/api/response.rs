@@ -1,9 +1,7 @@
-
 use serde::de::DeserializeOwned;
 
-use crate::api::Method;
 use crate::api::error::Error;
-use serde_json::Value;
+use crate::api::Method;
 
 #[derive(Debug)]
 pub struct Response {
@@ -13,10 +11,7 @@ pub struct Response {
 
 impl Response {
     pub fn new(response: reqwest::Response, method: Method) -> Self {
-        Self {
-            response,
-            method
-        }
+        Self { response, method }
     }
     pub fn response(&self) -> &reqwest::Response {
         &self.response
@@ -32,10 +27,10 @@ impl Response {
     }
 
     pub async fn json<B>(self) -> Result<B, Error>
-    where B: DeserializeOwned
+    where
+        B: DeserializeOwned,
     {
         let body = self.response.json::<B>().await?;
         Ok(body)
-
     }
 }

@@ -1,21 +1,20 @@
 use serde::Deserialize;
 
-use crate::api::transport::Transport;
-use crate::api::response::Response;
-use crate::api::Method;
 use crate::api::error::Error;
+use crate::api::response::Response;
+use crate::api::transport::Transport;
+use crate::api::Method;
 
 use crate::api::client::CoinGecko;
 
-
 pub enum PingParts {
-    None
+    None,
 }
 
 impl PingParts {
     fn url(&self) -> &'static str {
         match self {
-            PingParts::None => "/ping"
+            PingParts::None => "/ping",
         }
     }
 }
@@ -27,7 +26,7 @@ pub struct PingPing<'a> {
 
 impl<'a> PingPing<'a> {
     pub fn new(transport: &'a Transport, parts: PingParts) -> Self {
-        PingPing {transport, parts}
+        PingPing { transport, parts }
     }
 
     pub async fn send(&self) -> Result<Response, Error> {
@@ -40,7 +39,13 @@ impl<'a> PingPing<'a> {
 
 #[derive(Deserialize, Debug)]
 pub struct PingPingResponse {
-    gecko_says: String
+    gecko_says: String,
+}
+
+impl PingPingResponse {
+    pub fn gecko_says(&self) -> &String {
+        &self.gecko_says
+    }
 }
 pub struct Ping<'a> {
     transport: &'a Transport,
