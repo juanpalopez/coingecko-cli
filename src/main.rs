@@ -1,5 +1,4 @@
 use crate::api::client::CoinGecko;
-use crate::api::error;
 use clap::{Parser, Subcommand};
 
 mod api;
@@ -9,6 +8,7 @@ mod cli;
 use crate::api::transport::TransportBuilder;
 use crate::cli::ping::PingCtx;
 use crate::cli::simple::SimpleCtx;
+use anyhow::Result;
 use url::Url;
 
 #[derive(Parser)]
@@ -25,7 +25,7 @@ enum Commands {
 }
 
 #[tokio::main]
-async fn main() -> Result<(), error::Error> {
+async fn main() -> Result<()> {
     let cli = Crypto::parse();
     const BASE_API_URL: &'static str = "https://api.coingecko.com/api/v3/";
     let base_url = Url::parse(BASE_API_URL)?;

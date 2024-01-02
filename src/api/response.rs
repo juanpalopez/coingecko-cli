@@ -1,6 +1,7 @@
+use anyhow::Result;
 use serde::de::DeserializeOwned;
 
-use crate::api::error::Error;
+use crate::api::error::ClientError;
 use crate::api::Method;
 
 #[derive(Debug)]
@@ -21,16 +22,22 @@ impl Response {
         &self.method
     }
 
-    pub async fn text(self) -> Result<String, Error> {
-        let body = self.response.text().await?;
-        Ok(body)
+    pub async fn text(self) -> Result<String> {
+        let body = self.response.text().await;
+        match body {
+            Ok(res) => Ok(res),
+            Err(err) => Err(ClientError::Serde(err).into()),
+        }
     }
 
-    pub async fn json<B>(self) -> Result<B, Error>
+    pub async fn json<B>(self) -> Result<B>
     where
         B: DeserializeOwned,
     {
-        let body = self.response.json::<B>().await?;
-        Ok(body)
+        let body = self.response.json::<B>().await;
+        match body {
+            Ok(res) => Ok(res),
+            Err(err) => Err(ClientError::Serde(err).into()),
+        }
     }
 }

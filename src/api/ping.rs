@@ -1,9 +1,9 @@
 use serde::Deserialize;
 
-use crate::api::error::Error;
 use crate::api::response::Response;
 use crate::api::transport::Transport;
 use crate::api::Method;
+use anyhow::Result;
 
 use crate::api::client::CoinGecko;
 
@@ -29,7 +29,7 @@ impl<'a> PingPing<'a> {
         PingPing { transport, parts }
     }
 
-    pub async fn send(&self) -> Result<Response, Error> {
+    pub async fn send(&self) -> Result<Response> {
         let path = self.parts.url();
         let method = Method::Get;
         let response = self.transport.send(method, &path).await?;

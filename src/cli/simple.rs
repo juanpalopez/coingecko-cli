@@ -1,6 +1,6 @@
 use crate::api::client::CoinGecko;
-use crate::api::error::Error;
 use crate::api::simple::SimpleSupportedVsCurrenciesParts;
+use anyhow::Result;
 use clap::{Parser, Subcommand};
 use serde_json::Value;
 
@@ -25,7 +25,7 @@ enum Commands {
 pub struct SupportedVsCurrenciesCtx {}
 
 impl SupportedVsCurrenciesCtx {
-    pub async fn run_command(&self, client: &CoinGecko) -> Result<(), Error> {
+    pub async fn run_command(&self, client: &CoinGecko) -> Result<()> {
         println!("Supported Vs currencies...");
         let response = client
             .simple()

@@ -1,26 +1,13 @@
-#[derive(Debug)]
-pub struct Error {
-    error_type: ErrorType,
-}
+use thiserror::Error as TError;
 
-#[derive(Debug)]
-enum ErrorType {
+#[derive(Debug, TError)]
+pub enum ClientError {
+    #[error("reqwest error: {0}")]
     Http(reqwest::Error),
+    #[error("reqwest error: {0}")]
+    Serde(reqwest::Error),
+    #[error("reqwest error: {0}")]
+    Build(reqwest::Error),
+    #[error("url error: {0}")]
     Url(url::ParseError),
-}
-
-impl From<reqwest::Error> for Error {
-    fn from(err: reqwest::Error) -> Error {
-        Error {
-            error_type: ErrorType::Http(err),
-        }
-    }
-}
-
-impl From<url::ParseError> for Error {
-    fn from(err: url::ParseError) -> Error {
-        Error {
-            error_type: ErrorType::Url(err),
-        }
-    }
 }

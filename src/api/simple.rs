@@ -1,7 +1,7 @@
+use anyhow::Result;
 use serde::Deserialize;
 
 use crate::api::client::CoinGecko;
-use crate::api::error::Error;
 use crate::api::response::Response;
 use crate::api::transport::Transport;
 use crate::api::Method;
@@ -28,7 +28,7 @@ impl<'a> SimpleSupportedVsCurrencies<'a> {
         SimpleSupportedVsCurrencies { transport, parts }
     }
 
-    pub async fn send(&self) -> Result<Response, Error> {
+    pub async fn send(&self) -> Result<Response> {
         let path = self.parts.url();
         let method = Method::Get;
         let response = self.transport.send(method, &path).await?;

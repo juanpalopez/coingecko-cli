@@ -1,17 +1,8 @@
-use crate::api::error::Error;
+use crate::api::error::ClientError;
 use crate::api::response::Response;
 use crate::api::Method;
+use anyhow::Result;
 use url::Url;
-
-pub enum BuildError {
-    Http(reqwest::Error),
-}
-
-impl From<reqwest::Error> for BuildError {
-    fn from(err: reqwest::Error) -> BuildError {
-        BuildError::Http(err)
-    }
-}
 
 #[derive(Debug)]
 pub struct TransportBuilder {
@@ -27,12 +18,15 @@ impl TransportBuilder {
         }
     }
 
-    pub fn build(self) -> Result<Transport, reqwest::Error> {
-        let new_client = self.client_builder.build()?;
-        Ok(Transport {
-            client: new_client,
-            base_url: self.url,
-        })
+    pub fn build(self) -> Result<Transport> {
+        let new_client = self.client_builder.build();
+        match new_client {
+            Ok(res_client) => Ok(Transport {
+                client: res_client,
+                base_url: self.url,
+            }),
+            Err(err) => Err(ClientError::Build(err).into()),
+        }
     }
 }
 
@@ -42,13 +36,13 @@ pub struct Transport {
 }
 
 impl Transport {
-    pub async fn send(&self, method: Method, path: &str) -> Result<Response, Error> {
+    pub async fn send(&self, method: Method, path: &str) -> Result<Response> {
         let url = self.base_url.join(path.trim_start_matches("/"))?;
         let response = self.client.get(url).send().await;
 
         match response {
             Ok(resp) => Ok(Response::new(resp, method)),
-            Err(err) => Err(err.into()),
+            Err(err) => Err(ClientError::Http(err).into()),
         }
     }
 }
