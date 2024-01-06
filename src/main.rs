@@ -6,6 +6,7 @@ mod cli;
 
 // mod simple;
 use crate::api::transport::TransportBuilder;
+use crate::cli::asset_platforms::AssetPlatformsCtx;
 use crate::cli::ping::PingCtx;
 use crate::cli::simple::SimpleCtx;
 use anyhow::Result;
@@ -20,6 +21,7 @@ struct Crypto {
 
 #[derive(Subcommand)]
 enum Commands {
+    AssetPlatforms(AssetPlatformsCtx),
     Ping(PingCtx),
     Simple(SimpleCtx),
 }
@@ -35,7 +37,8 @@ async fn main() -> Result<()> {
 
     match &cli.commands {
         Commands::Ping(ctx) => PingCtx::run_command(ctx, &client).await?,
-        Commands::Simple(ctx) => SimpleCtx::run_command(ctx, &client).await,
-    }
+        Commands::Simple(ctx) => SimpleCtx::run_command(ctx, &client).await?,
+        Commands::AssetPlatforms(ctx) => AssetPlatformsCtx::run_command(ctx, &client).await?,
+    };
     Ok(())
 }

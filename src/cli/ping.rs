@@ -4,7 +4,7 @@ use anyhow::Result;
 use clap::Parser;
 use serde_json::Value;
 
-#[derive(Parser, Debug)]
+#[derive(Parser)]
 pub struct PingCtx {}
 
 impl PingCtx {

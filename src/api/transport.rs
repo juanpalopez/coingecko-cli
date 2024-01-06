@@ -2,6 +2,7 @@ use crate::api::error::ClientError;
 use crate::api::response::Response;
 use crate::api::Method;
 use anyhow::Result;
+use serde::Serialize;
 use url::Url;
 
 #[derive(Debug)]
@@ -36,9 +37,31 @@ pub struct Transport {
 }
 
 impl Transport {
-    pub async fn send(&self, method: Method, path: &str) -> Result<Response> {
+    fn method(&self, method: &Method) -> reqwest::Method {
+        match method {
+            Method::Get => reqwest::Method::GET,
+            Method::Post => reqwest::Method::POST,
+        }
+    }
+
+    pub async fn send<Q>(
+        &self,
+        method: Method,
+        path: &str,
+        query_string: Option<&Q>,
+    ) -> Result<Response>
+    where
+        Q: Serialize,
+    {
         let url = self.base_url.join(path.trim_start_matches("/"))?;
-        let response = self.client.get(url).send().await;
+        let request_method = self.method(&method);
+        let mut request_builder = self.client.request(request_method, url);
+
+        if let Some(q) = query_string {
+            request_builder = request_builder.query(q);
+        }
+
+        let response = request_builder.send().await;
 
         match response {
             Ok(resp) => Ok(Response::new(resp, method)),

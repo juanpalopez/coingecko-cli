@@ -1,3 +1,4 @@
+pub mod asset_platforms;
 pub mod client;
 pub mod error;
 pub mod ping;
