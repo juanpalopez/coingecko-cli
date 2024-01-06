@@ -4,13 +4,13 @@ use anyhow::Result;
 use clap::{Parser, Subcommand};
 use serde_json::Value;
 
-#[derive(Debug, Parser)]
+#[derive(Parser)]
 pub struct SimpleCtx {
     #[command(subcommand)]
     commands: Commands,
 }
 
-#[derive(Debug, Subcommand)]
+#[derive(Subcommand)]
 enum Commands {
     /// Get the current price of any cryptocurrencies in any other supported currencies that you need.
     Price(PriceCtx),
@@ -21,7 +21,7 @@ enum Commands {
     SupportedVsCurrencies(SupportedVsCurrenciesCtx),
 }
 
-#[derive(Debug, Parser)]
+#[derive(Parser)]
 pub struct SupportedVsCurrenciesCtx {}
 
 impl SupportedVsCurrenciesCtx {
@@ -40,7 +40,7 @@ impl SupportedVsCurrenciesCtx {
     }
 }
 
-#[derive(Debug, Parser)]
+#[derive(Parser)]
 pub struct PriceCtx {}
 
 impl PriceCtx {
@@ -49,7 +49,7 @@ impl PriceCtx {
     }
 }
 
-#[derive(Debug, Parser)]
+#[derive(Parser)]
 pub struct TokenPriceCtx {}
 
 impl TokenPriceCtx {
@@ -59,7 +59,7 @@ impl TokenPriceCtx {
 }
 
 impl SimpleCtx {
-    pub async fn run_command(&self, client: &CoinGecko) {
+    pub async fn run_command(&self, client: &CoinGecko) -> Result<()> {
         match &self.commands {
             Commands::SupportedVsCurrencies(ctx) => {
                 SupportedVsCurrenciesCtx::run_command(ctx, client).await;
@@ -71,5 +71,6 @@ impl SimpleCtx {
                 TokenPriceCtx::run_command(ctx).await;
             }
         };
+        Ok(())
     }
 }

@@ -1,5 +1,5 @@
 use anyhow::Result;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use crate::api::client::CoinGecko;
 use crate::api::response::Response;
@@ -31,7 +31,17 @@ impl<'a> SimpleSupportedVsCurrencies<'a> {
     pub async fn send(&self) -> Result<Response> {
         let path = self.parts.url();
         let method = Method::Get;
-        let response = self.transport.send(method, &path).await?;
+        let query_string = {
+            #[serde_with::skip_serializing_none]
+            #[derive(Serialize)]
+            struct QueryParams {}
+            let query_params = QueryParams {};
+            Some(query_params)
+        };
+        let response = self
+            .transport
+            .send(method, &path, query_string.as_ref())
+            .await?;
         Ok(response)
     }
 }
