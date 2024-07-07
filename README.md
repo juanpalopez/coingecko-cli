@@ -86,4 +86,12 @@ After installing the project, you can run the CLI with the following steps:
 
    Replace `[arguments]` with any specific commands or options your CLI supports.
 
+5. To view all available commands and their descriptions, you can use the help command:
+    ```sh
+    cargo run -- --help
+    ```
+   Or, if running a built-release version:
+    ```sh
+    ./coingecko-cli --help
+
 Congratulations! You are now running the CLI.
