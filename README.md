@@ -73,7 +73,11 @@ After installing the project, you can run the CLI with the following steps:
     cargo run -- [arguments]
     ```
 
+<<<<<<< HEAD
    For example, to run a command `ping`, you would use:
+=======
+   For example, to run a command `list-coins`, you would use:
+>>>>>>> cb1e48742f7998a055b9ee6b9a5b65fe8fe33c36
     ```sh
     cargo run -- ping
     ```
