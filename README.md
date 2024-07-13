@@ -34,7 +34,7 @@ To install the project, please follow these steps:
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/juanlopezguzman/coingecko-cli.git
+    git clone https://github.com/juanpalopez/coingecko-cli.git
     ```
 
 2. Change to the project directory:
@@ -73,7 +73,7 @@ After installing the project, you can run the CLI with the following steps:
     cargo run -- [arguments]
     ```
 
-   For example, to run a command `list-coins`, you would use:
+   For example, to run a command `ping`, you would use:
     ```sh
     cargo run -- ping
     ```
