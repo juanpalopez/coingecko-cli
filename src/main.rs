@@ -24,6 +24,7 @@ enum Commands {
     AssetPlatforms(AssetPlatformsCtx),
     Ping(PingCtx),
     Simple(SimpleCtx),
+    Contract(ContractCtx),
 }
 
 #[tokio::main]
@@ -39,6 +40,7 @@ async fn main() -> Result<()> {
         Commands::Ping(ctx) => PingCtx::run_command(ctx, &client).await?,
         Commands::Simple(ctx) => SimpleCtx::run_command(ctx, &client).await?,
         Commands::AssetPlatforms(ctx) => AssetPlatformsCtx::run_command(ctx, &client).await?,
+        Commands::Contract(ctx) => ContractCtx::run_command(ctx, &client).await?,
     };
     Ok(())
 }
