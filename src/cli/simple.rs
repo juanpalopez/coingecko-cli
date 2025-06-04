@@ -1,4 +1,4 @@
-use crate::api::{client::CoinGecko, response};
+use crate::api::client::CoinGecko;
 use crate::api::simple::{SimpleSupportedVsCurrenciesParts, SimpleTokenPriceParts};
 use anyhow::Result;
 use clap::{Parser, Subcommand};

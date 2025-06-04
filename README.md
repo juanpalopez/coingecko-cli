@@ -1,6 +1,6 @@
 # CoinGecko CLI
 
-In this project, we will be implementing a CLI that maps to CoingGecko API
+In this project, we will be implementing a CLI that maps to CoinGecko API
 https://www.coingecko.com/en/api/documentation#
 
 | Command         | Status      |

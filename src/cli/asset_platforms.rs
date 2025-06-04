@@ -26,14 +26,14 @@ pub struct ListCtx {
 impl ListCtx {
     pub async fn run_command(&self, client: &CoinGecko) -> Result<()> {
         println!("List...");
-        let respoinse = client
+        let response = client
             .asset_platforms()
             .list(AssetPlatformsListParts::None)
             .filter(self.only_nft_support)
             .send()
             .await?;
 
-        let body: Value = respoinse.json().await?;
+        let body: Value = response.json().await?;
         println!("{:#}", body);
         Ok(())
     }
