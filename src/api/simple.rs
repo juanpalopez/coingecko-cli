@@ -85,6 +85,118 @@ pub struct SimpleTokenPrice<'a, 'b> {
     precision: Option<u8>,
 }
 
+// Coin Price
+pub enum SimplePriceParts {
+    None,
+}
+
+impl SimplePriceParts {
+    fn url(&self) -> &'static str {
+        match self {
+            SimplePriceParts::None => "/simple/price",
+        }
+    }
+}
+
+pub struct SimplePrice<'a, 'b> {
+    transport: &'a Transport,
+    parts: SimplePriceParts,
+    ids: &'b str,
+    vs_currencies: &'b str,
+    include_market_cap: Option<bool>,
+    include_24hr_vol: Option<bool>,
+    include_24hr_change: Option<bool>,
+    include_last_updated_at: Option<bool>,
+    precision: Option<u8>,
+}
+
+impl<'a, 'b> SimplePrice<'a, 'b> {
+    pub fn new(
+        transport: &'a Transport,
+        parts: SimplePriceParts,
+        ids: &'b str,
+        vs_currencies: &'b str,
+    ) -> Self {
+        SimplePrice {
+            transport,
+            parts,
+            ids,
+            vs_currencies,
+            include_market_cap: None,
+            include_24hr_vol: None,
+            include_24hr_change: None,
+            include_last_updated_at: None,
+            precision: None,
+        }
+    }
+
+    pub fn include_market_cap(mut self, include: bool) -> Self {
+        if include {
+            self.include_market_cap = Some(true);
+        };
+        self
+    }
+
+    pub fn include_24hr_vol(mut self, include: bool) -> Self {
+        if include {
+            self.include_24hr_vol = Some(true);
+        };
+        self
+    }
+
+    pub fn include_24hr_change(mut self, include: bool) -> Self {
+        if include {
+            self.include_24hr_change = Some(true);
+        };
+        self
+    }
+
+    pub fn include_last_updated_at(mut self, include: bool) -> Self {
+        if include {
+            self.include_last_updated_at = Some(true);
+        };
+        self
+    }
+
+    pub fn precision(mut self, precision: Option<u8>) -> Self {
+        self.precision = precision;
+        self
+    }
+
+    pub async fn send(self) -> Result<Response> {
+        let path = self.parts.url();
+        let method = Method::Get;
+        let query_string = {
+            #[serde_with::skip_serializing_none]
+            #[derive(Serialize)]
+            struct QueryParams<'a> {
+                ids: &'a str,
+                vs_currencies: &'a str,
+                include_market_cap: Option<bool>,
+                include_24hr_vol: Option<bool>,
+                include_24hr_change: Option<bool>,
+                include_last_updated_at: Option<bool>,
+                precision: Option<u8>,
+            }
+            let query_params = QueryParams {
+                ids: &self.ids,
+                vs_currencies: &self.vs_currencies,
+                include_market_cap: self.include_market_cap,
+                include_24hr_vol: self.include_24hr_vol,
+                include_24hr_change: self.include_24hr_change,
+                include_last_updated_at: self.include_last_updated_at,
+                precision: self.precision,
+            };
+            Some(query_params)
+        };
+        let response = self
+            .transport
+            .send(method, &path, query_string.as_ref())
+            .await?;
+        Ok(response)
+    }
+}
+
 impl<'a, 'b> SimpleTokenPrice<'a, 'b> {
     pub fn new(
         transport: &'a Transport,
@@ -199,6 +311,15 @@ impl<'a> Simple<'a> {
         vs_currencies: &'a str,
     ) -> SimpleTokenPrice {
         SimpleTokenPrice::new(self.transport(), parts, contract_address, vs_currencies)
+    }
+
+    pub fn price(
+        &self,
+        parts: SimplePriceParts,
+        ids: &'a str,
+        vs_currencies: &'a str,
+    ) -> SimplePrice {
+        SimplePrice::new(self.transport(), parts, ids, vs_currencies)
     }
 }
 

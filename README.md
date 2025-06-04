@@ -6,7 +6,7 @@ https://www.coingecko.com/en/api/documentation#
 | Command         | Status      |
 | --------------- | ----------- |
 | ping            | Done        |
-| simple          | In progress |
+| simple          | Done        |
 | coins           |             |
 | contract        |             |
 | asset_platforms | In progress |

@@ -1,5 +1,9 @@
-use crate::api::{client::CoinGecko, response};
-use crate::api::simple::{SimpleSupportedVsCurrenciesParts, SimpleTokenPriceParts};
+use crate::api::client::CoinGecko;
+use crate::api::simple::{
+    SimpleSupportedVsCurrenciesParts,
+    SimpleTokenPriceParts,
+    SimplePriceParts,
+};
 use anyhow::Result;
 use clap::{Parser, Subcommand};
 use serde_json::Value;
@@ -41,11 +45,51 @@ impl SupportedVsCurrenciesCtx {
 }
 
 #[derive(Parser)]
-pub struct PriceCtx {}
+pub struct PriceCtx {
+    /// Comma separated cryptocurrency ids.
+    #[arg(long)]
+    ids: String,
+    /// Comma separated target currencies.
+    #[arg(long)]
+    vs_currencies: String,
+    /// Include market capitalization.
+    #[arg(long, default_value_t = false)]
+    include_market_cap: bool,
+    /// Include 24hr trading volume.
+    #[arg(long, default_value_t = false)]
+    include_24hr_vol: bool,
+    /// Include 24hr price change.
+    #[arg(long, default_value_t = false)]
+    include_24hr_change: bool,
+    /// Include last updated timestamp.
+    #[arg(long, default_value_t = false)]
+    include_last_updated_at: bool,
+    /// Precision of market data.
+    #[arg(long)]
+    precision: Option<u8>,
+}
 
 impl PriceCtx {
-    pub async fn run_command(&self) {
-        println!("Price...")
+    pub async fn run_command(&self, client: &CoinGecko) -> Result<()> {
+        println!("Price...");
+        let response = client
+            .simple()
+            .price(
+                SimplePriceParts::None,
+                self.ids.as_str(),
+                self.vs_currencies.as_str(),
+            )
+            .include_market_cap(self.include_market_cap)
+            .include_24hr_vol(self.include_24hr_vol)
+            .include_24hr_change(self.include_24hr_change)
+            .include_last_updated_at(self.include_last_updated_at)
+            .precision(self.precision)
+            .send()
+            .await?;
+
+        let body: Value = response.json().await?;
+        println!("{:#}", body);
+        Ok(())
     }
 }
 
@@ -108,7 +152,7 @@ impl SimpleCtx {
                 SupportedVsCurrenciesCtx::run_command(ctx, client).await?;
             }
             Commands::Price(ctx) => {
-                PriceCtx::run_command(ctx).await;
+                PriceCtx::run_command(ctx, client).await?;
             }
             Commands::TokenPrice(ctx) => {
                 TokenPriceCtx::run_command(ctx, client).await?;
