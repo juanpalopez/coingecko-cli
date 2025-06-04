@@ -1,6 +1,6 @@
 # Contributing to CoinGecko-CLI
 
-Thank you for your interest in contributing to CoinGecko-CLI! We welcome contributions from the community to help improve our project. This document outlines the guidelines and steps for contributing to te project.
+Thank you for your interest in contributing to CoinGecko-CLI! We welcome contributions from the community to help improve our project. This document outlines the guidelines and steps for contributing to the project.
 
 ## Table of Contents
 - [Getting Started](#getting-started)
