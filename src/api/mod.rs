@@ -1,5 +1,6 @@
 pub mod asset_platforms;
 pub mod client;
+pub mod coins;
 pub mod error;
 pub mod ping;
 pub mod response;
