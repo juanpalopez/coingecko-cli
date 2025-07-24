@@ -7,6 +7,7 @@ mod cli;
 // mod simple;
 use crate::api::transport::TransportBuilder;
 use crate::cli::asset_platforms::AssetPlatformsCtx;
+use crate::cli::coins::CoinsCtx;
 use crate::cli::ping::PingCtx;
 use crate::cli::simple::SimpleCtx;
 use anyhow::Result;
@@ -22,6 +23,7 @@ struct Crypto {
 #[derive(Subcommand)]
 enum Commands {
     AssetPlatforms(AssetPlatformsCtx),
+    Coins(CoinsCtx),
     Ping(PingCtx),
     Simple(SimpleCtx),
 }
@@ -36,9 +38,10 @@ async fn main() -> Result<()> {
     let client = CoinGecko::new(transport);
 
     match &cli.commands {
+        Commands::AssetPlatforms(ctx) => AssetPlatformsCtx::run_command(ctx, &client).await?,
+        Commands::Coins(ctx) => CoinsCtx::run_command(ctx, &client).await?,
         Commands::Ping(ctx) => PingCtx::run_command(ctx, &client).await?,
         Commands::Simple(ctx) => SimpleCtx::run_command(ctx, &client).await?,
-        Commands::AssetPlatforms(ctx) => AssetPlatformsCtx::run_command(ctx, &client).await?,
     };
     Ok(())
 }
